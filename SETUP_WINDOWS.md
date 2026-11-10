@@ -2,7 +2,7 @@
 
 The server is a small Python program on this laptop. Claude Desktop or Claude Code starts it and talks to it over stdio, so no network port is opened. It connects out to Snowflake (`<your-account-identifier>`) as `CLAUDE_AGENT` with a key pair, under the SELECT-only role `A5_APP_RO`.
 
-## 1. Python environment (in the Assignment5 folder, PowerShell)
+## 1. Python environment (in the project folder, PowerShell)
 
 ```powershell
 py -3.13 -m venv .venv
@@ -32,7 +32,7 @@ Settings → Developer → Edit Config opens `claude_desktop_config.json`. Add t
 
 ## 4b. Claude Code
 
-From the Assignment5 folder:
+From the project folder:
 
 ```powershell
 claude mcp add --scope project sakila-warehouse --env SNOWFLAKE_CONNECTION=claude --env SNOWFLAKE_ROLE=A5_APP_RO -- "<this folder>\.venv\Scripts\python.exe" "<this folder>\mcp_server.py"

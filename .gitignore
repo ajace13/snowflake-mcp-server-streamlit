@@ -3,3 +3,7 @@ local/
 __pycache__/
 *.p8
 .env
+.mcp.json
+.pytest_cache/
+.claude/
+*.bundle
