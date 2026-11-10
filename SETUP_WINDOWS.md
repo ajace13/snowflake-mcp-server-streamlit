@@ -24,7 +24,7 @@ Python 3.13 is used because 3.14 is newer than some Snowflake wheels.
 .venv\Scripts\python check_connection.py
 ```
 
-It prints your user and role, the SAKILA.DW tables, revenue by store, and what that query cost. The two stores should add up to 67,406.56, the Week 4 check. Last, it tries an `UPDATE` that changes nothing (`WHERE 1 = 0`), which the read-only role should **refuse**.
+It prints your user and role, the SAKILA.DW tables, revenue by store, and what that query cost. The two stores should add up to 67,406.56, the known total from the warehouse build. Last, it tries an `UPDATE` that changes nothing (`WHERE 1 = 0`), which the read-only role should **refuse**.
 
 ## 4a. Claude Desktop
 

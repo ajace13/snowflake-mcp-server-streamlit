@@ -1,6 +1,6 @@
 """Run a routed plan through the warehouse tools and turn the result into an honest answer.
 
-The three honesty rules from the assignment live here, as code rather than prompts:
+The three honesty rules live here, as code rather than prompts:
 1. Question/query mismatch: asked about customers but counted rows (or the reverse) -> say so,
    with both numbers.
 2. Nothing came back -> "no data for that", never "zero".

@@ -67,7 +67,7 @@ Credentials:
 
 ## Trying to break it
 
-Five adversarial questions, then 18 harder variants aimed at the keyword router's edges. Full log: [docs/part4_findings.md](docs/part4_findings.md); live results: [docs/part4_live_results.md](docs/part4_live_results.md).
+Five adversarial questions, then 18 harder variants aimed at the keyword router's edges. Full log: [docs/break_test_findings.md](docs/break_test_findings.md); live results: [docs/break_test_live_results.md](docs/break_test_live_results.md).
 
 | Category | Question | Result |
 | --- | --- | --- |
@@ -94,7 +94,7 @@ To run against Snowflake (key pair, read-only role, Claude Desktop and Claude Co
 ```powershell
 .venv\Scripts\python check_connection.py   # live: identity, tables, a real aggregate, its cost, read-only proof
 .venv\Scripts\python -m streamlit run app.py
-.venv\Scripts\python run_break_tests.py    # live adversarial questions -> docs/part4_live_results.md
+.venv\Scripts\python run_break_tests.py    # live adversarial questions -> docs/break_test_live_results.md
 ```
 
 Then register the server in Claude Desktop (`claude_desktop_config.example.json`) or Claude Code (`.mcp.json.example`).

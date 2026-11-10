@@ -32,7 +32,7 @@ def ask(q, defaults=None):
     return plan, answer_question(q, plan)
 
 
-# ---------------- the five Part 4 break questions ----------------
+# ---------------- the five core break-test questions ----------------
 
 def test_break_1_vague_question_shows_assumption():
     plan, a = ask("How are we doing?")
@@ -98,7 +98,7 @@ def test_routing(q, tool, metric, group):
         assert plan.args["metric"] == metric and plan.args["group_by"] == group
 
 
-# ---------------- gaps found by probing, then fixed (see docs/part4_break_tests.md) ----------------
+# ---------------- gaps found by probing, then fixed (see docs/break_test_findings.md) ----------------
 
 @pytest.mark.parametrize("q,kind", [
     ("What percent of customers rented Action films?", "cannot"),

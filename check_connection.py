@@ -1,6 +1,6 @@
 """Run once on your laptop to prove the setup works:  python check_connection.py
 
-1. Connects with your existing Week 4 key pair and prints who/where you are.
+1. Connects with your existing key pair and prints who/where you are.
 2. Lists the SAKILA.DW tables and runs one real aggregate (revenue by store).
 3. Looks up what that query cost, through the same code the MCP tool uses.
 4. Tries an UPDATE that touches no rows, which must be REFUSED under the read-only role,
@@ -30,7 +30,7 @@ def main() -> None:
     for row in agg["rows"]:
         print(f"  {row['group_value']}: ${row['value']:,.2f} from {row['fact_rows']} payments, "
               f"{row['distinct_customers']} customers")
-    print(f"  total = ${sum(r['value'] for r in agg['rows']):,.2f} (Week 4 check: 67,406.56)")
+    print(f"  total = ${sum(r['value'] for r in agg['rows']):,.2f} (expected: 67,406.56)")
 
     cost = tools.query_cost(agg["query_id"])
     if cost["found"]:

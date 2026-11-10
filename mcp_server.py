@@ -1,4 +1,4 @@
-"""MCP server over the Week 4 Sakila star schema in Snowflake (CNDE Assignment 5, Part 1).
+"""MCP server over the Sakila star schema (SAKILA.DW) in Snowflake.
 
 Runs locally over stdio. Claude Desktop or Claude Code starts it as a subprocess, so
 nothing may be printed to stdout: all logging goes to stderr.

@@ -1,4 +1,4 @@
--- CNDE Assignment 5: attach a key from this PC to CLAUDE_AGENT and create a read-only role.
+-- Attach a key from this PC to CLAUDE_AGENT and create a read-only role.
 -- Paste into a Snowsight worksheet and Run All (as ACCOUNTADMIN). Safe to re-run.
 -- <PUBLIC_KEY> = the public key body (no BEGIN/END lines). The filled-in copy lives in local/ (git-ignored).
 USE ROLE ACCOUNTADMIN;

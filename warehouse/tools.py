@@ -7,7 +7,7 @@ Rules every tool follows:
 - Every result says which SQL ran, how many rows came back, what one row is, and the
   query id, so cost can be looked up.
 
-The warehouse is the Week 4 Sakila star, SAKILA.DW (see catalog.py).
+The warehouse is the Sakila star schema, SAKILA.DW (see catalog.py).
 """
 from __future__ import annotations
 

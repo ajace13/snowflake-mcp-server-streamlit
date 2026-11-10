@@ -86,7 +86,7 @@ def test_grain_and_kind():
     assert "not documented" in grain_for("SOMETHING_ELSE")
 
 
-# ---- settings come from the Week 4 config.toml, env overrides win ----
+# ---- settings come from the Snowflake CLI config.toml, env overrides win ----
 def test_settings_from_config_toml(tmp_path, monkeypatch):
     cfg = tmp_path / "config.toml"
     cfg.write_text(

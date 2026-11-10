@@ -1,4 +1,4 @@
-"""The Week 4 star schema the tools read: SAKILA.DW (Assignment 4).
+"""The star schema the tools read: SAKILA.DW (built in a companion warehouse project).
 
 Everything that can end up in SQL text (table names, metrics, groupings, categories,
 store ids) is listed here. Tools look values up in these lists; nothing a user types is
@@ -77,4 +77,4 @@ def table_kind(name: str) -> str:
 
 
 def grain_for(name: str) -> str:
-    return GRAIN.get(name.upper(), "Grain not documented. Check the Week 4 DDL before trusting counts from this table.")
+    return GRAIN.get(name.upper(), "Grain not documented. Check the warehouse DDL before trusting counts from this table.")
