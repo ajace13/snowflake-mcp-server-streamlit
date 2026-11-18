@@ -1,8 +1,8 @@
-# Sakila MCP Snowflake Agent
+# Snowflake MCP server and Streamlit app
 
 Plain-English questions over a Snowflake star schema, answered through four bounded, read-only tools instead of free-form SQL.
 
-[![tests](https://github.com/ajace13/sakila-mcp-snowflake-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/ajace13/sakila-mcp-snowflake-agent/actions/workflows/tests.yml)
+[![tests](https://github.com/ajace13/snowflake-mcp-server-streamlit/actions/workflows/tests.yml/badge.svg)](https://github.com/ajace13/snowflake-mcp-server-streamlit/actions/workflows/tests.yml)
 
 ## What it does
 
