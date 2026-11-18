@@ -15,7 +15,6 @@ from __future__ import annotations
 import datetime as dt
 
 import altair as alt
-import pandas as pd
 import streamlit as st
 
 from qa import answer as ans
