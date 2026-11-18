@@ -6,15 +6,15 @@ Each requirement, mapped to the code that meets it and the evidence that it work
 
 | Requirement | Where | Evidence |
 | --- | --- | --- |
-| 1a Describe the schema: tables and what one row is | `describe_schema` in `mcp_server.py`, `warehouse/tools.py`; grain sentences in `warehouse/catalog.py` (`GRAIN`) | Live: 7 tables in SAKILA.DW with row counts and "one row is". Test `test_mcp_lists_tools` (exactly four) |
-| 1b Parameterized query with typed args (dates, category, store), no SQL string | `find_rentals(start_date, end_date, category, store_id, limit)` | Live: a start_date of `2005-07-01' OR 1=1 --` was rejected as not a date. Values are bound parameters (tests `test_aggregate_builds_fixed_sql_and_binds_values`, `test_find_rentals_caps_limit_and_reports_total`) |
-| 1c Aggregate: revenue, counts, averages over a period | `aggregate(metric, start_date, end_date, group_by, category, store_id)`, 6 metrics | Live: revenue by store 33,726.77 + 33,679.79 = 67,406.56 (matches the known total from the warehouse build) |
-| 1d Query cost: elapsed time and credits from QUERY_HISTORY | `query_cost(query_id)` reads `INFORMATION_SCHEMA.QUERY_HISTORY_BY_USER` | Live: elapsed, compile, execution, bytes scanned, cloud-services credits, warehouse-credit estimate (labelled as an estimate) |
-| 2a Docstrings clear enough to pick the right tool | Each tool's docstring in `mcp_server.py` says when to use it and when not to (e.g. "how many customers" means `distinct_customers`, never `rental_count`) | Claude Desktop picks `aggregate` with `distinct_customers` for "how many customers..." |
-| 2b Allow-list for anything that reaches GROUP BY | `check_allowed()` against `catalog.GROUP_BY`, `METRICS`, `CATEGORIES`, table names | Live: `group_by="store; DROP TABLE ..."` rejected. Test `test_allow_list_exact_match_only` |
-| 2b Parsed dates | `parse_date()` / `parse_date_range()`: real dates, start before end | Tests `test_parse_date_*`, `test_date_range_order` |
-| 2b Capped LIMIT | `cap_limit()`: default 50, max 200, and the result says it was capped | Live: limit 100000 capped to 200. Test `test_limit_default_and_cap` |
-| 3 README paragraph: why four bounded tools | `README.md`, section "Why four bounded tools..." | |
+| Describe the schema: tables and what one row is | `describe_schema` in `mcp_server.py`, `warehouse/tools.py`; grain sentences in `warehouse/catalog.py` (`GRAIN`) | Live: 7 tables in SAKILA.DW with row counts and "one row is". Test `test_mcp_lists_tools` (exactly four) |
+| Parameterized query with typed args (dates, category, store), no SQL string | `find_rentals(start_date, end_date, category, store_id, limit)` | Live: a start_date of `2005-07-01' OR 1=1 --` was rejected as not a date. Values are bound parameters (tests `test_aggregate_builds_fixed_sql_and_binds_values`, `test_find_rentals_caps_limit_and_reports_total`) |
+| Aggregate: revenue, counts, averages over a period | `aggregate(metric, start_date, end_date, group_by, category, store_id)`, 6 metrics | Live: revenue by store 33,726.77 + 33,679.79 = 67,406.56 (matches the known total from the warehouse build) |
+| Query cost: elapsed time and credits from QUERY_HISTORY | `query_cost(query_id)` reads `INFORMATION_SCHEMA.QUERY_HISTORY_BY_USER` | Live: elapsed, compile, execution, bytes scanned, cloud-services credits, warehouse-credit estimate (labelled as an estimate) |
+| Docstrings clear enough to pick the right tool | Each tool's docstring in `mcp_server.py` says when to use it and when not to (e.g. "how many customers" means `distinct_customers`, never `rental_count`) | Claude Desktop picks `aggregate` with `distinct_customers` for "how many customers..." |
+| Allow-list for anything that reaches GROUP BY | `check_allowed()` against `catalog.GROUP_BY`, `METRICS`, `CATEGORIES`, table names | Live: `group_by="store; DROP TABLE ..."` rejected. Test `test_allow_list_exact_match_only` |
+| Parsed dates | `parse_date()` / `parse_date_range()`: real dates, start before end | Tests `test_parse_date_*`, `test_date_range_order` |
+| Capped LIMIT | `cap_limit()`: default 50, max 200, and the result says it was capped | Live: limit 100000 capped to 200. Test `test_limit_default_and_cap` |
+| README paragraph: why four bounded tools | `README.md`, section "Why four bounded tools..." | |
 | Backstop | Read-only role `A5_APP_RO` (SELECT + USAGE only); `USE SECONDARY ROLES NONE` | Live: `UPDATE ... WHERE 1 = 0` refused by Snowflake (`check_connection.py`) |
 
 ## Streamlit app
@@ -22,7 +22,7 @@ Each requirement, mapped to the code that meets it and the evidence that it work
 | Requirement | Where | Evidence |
 | --- | --- | --- |
 | User types a question and gets an answer | `app.py`: question form, then `qa/router.py` picks a tool and `qa/answer.py` writes the answer. No LLM and no API key: keyword rules map the question to one of the four tools | Test `test_app_answers_and_shows_tool_sql_rows_cost`. Screenshot: `writeup/screenshots/a_customers_action_july2005.png` |
-| Local is fine (SiS preferred) | Runs locally: `.venv\Scripts\python -m streamlit run app.py`. It uses the same `warehouse/` tools as the MCP server | |
+| Runs locally (Streamlit in Snowflake not required) | Runs locally: `.venv\Scripts\python -m streamlit run app.py`. It uses the same `warehouse/` tools as the MCP server | |
 | A chart that changes with the answer | `draw_chart()` in `app.py`. Monthly answers get a line chart; breakdowns by category, store, country or rating get a sorted bar chart; single numbers get a "rows vs. different customers" bar chart; a no-data answer gets a timeline of the dates asked for against the dates the data covers; a list gets rentals by category; a cost answer gets compile/queue/execute time | Screenshots: `a_customers_action_july2005.png` (rows vs customers), `e_revenue_by_month.png` (monthly line, gap called out) |
 | A filter that keeps its value when the script reruns | Sidebar `Dates`, `Store` and `Film category` use `key=` (`f_dates`, `f_store`, `f_category`), so Streamlit keeps them in `session_state` across reruns. The answer shows which filters were in effect, and offers "Ask again with current filters" if they change | Test `test_app_filter_keeps_value_across_reruns` |
 | Usable without a tutorial, no raw JSON | Example-question buttons, a "What I can answer" list in the sidebar, a one-sentence headline, `st.metric`, a formatted table (dollars, thousands separators). Tool results are never printed as dicts | Test asserts no `{` in the headline. Screenshots: all of `writeup/screenshots/` |

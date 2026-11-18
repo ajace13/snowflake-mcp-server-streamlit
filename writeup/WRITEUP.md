@@ -1,7 +1,7 @@
 # Sakila MCP Server & Streamlit App on Snowflake: write-up
 
 Warehouse: the Sakila star schema, `SAKILA.DW` (FACT_RENTAL and FACT_PAYMENT; DIM_CUSTOMER and DIM_FILM as Type 2; DIM_STORE, DIM_STAFF, DIM_DATE).
-This file is the source for the write-up PDF (`writeup/project_writeup.pdf`). All numbers below are from live runs on 2026-11-01 against Snowflake, using the read-only role `A5_APP_RO`.
+All numbers below are from live runs on 2026-11-01 against Snowflake, using the read-only role `A5_APP_RO`.
 
 Evidence in this folder:
 
@@ -24,14 +24,14 @@ A single tool that runs whatever SQL the model writes turns every question into 
 
 | Requirement | Tool / mechanism | Live evidence |
 |---|---|---|
-| 1a Describe the schema | `describe_schema(table=None)` | 7 tables, each with "one row = ..." and a row count. FACT_RENTAL: "Counting rows counts rentals, NOT customers". DIM_CUSTOMER: "one VERSION of a customer (Type 2)". |
-| 1b Parameterized query | `find_rentals(start_date, end_date, category, store_id, limit)` | Typed dates, a category and a store; there is no SQL-string argument. |
-| 1c Aggregate | `aggregate(metric, start_date, end_date, group_by, category, store_id)` | Revenue by store: $33,726.77 + $33,679.79 = $67,406.56, matching the star schema's own reconciliation. |
-| 1d Query cost | `query_cost(query_id)` from `INFORMATION_SCHEMA.QUERY_HISTORY_BY_USER` | Example: 1.824 s elapsed (1.142 s compile, 0.653 s execute), 8,720 bytes scanned, 0.000238 cloud-services credits, about 0.00018 warehouse credits (labelled as an estimate). |
-| 2a Docstrings | Each tool says when to use it and when not to | Example, from aggregate: "how many customers" → `distinct_customers`, never `rental_count`. |
-| 2b Allow-list for GROUP BY | `check_allowed` on metric, group_by, category and table | `group_by = "store; DROP TABLE ..."` was rejected with the list of allowed values. |
-| 2b Parsed dates | `parse_date`: YYYY-MM-DD only, and start ≤ end | `"2005-07-01' OR 1=1 --"` was rejected; an end date before the start date was rejected. |
-| 2b Capped LIMIT | `cap_limit`: 1–200 | `limit = 100000` ran with 200 and said so. |
+| Describe the schema | `describe_schema(table=None)` | 7 tables, each with "one row = ..." and a row count. FACT_RENTAL: "Counting rows counts rentals, NOT customers". DIM_CUSTOMER: "one VERSION of a customer (Type 2)". |
+| Parameterized query | `find_rentals(start_date, end_date, category, store_id, limit)` | Typed dates, a category and a store; there is no SQL-string argument. |
+| Aggregate | `aggregate(metric, start_date, end_date, group_by, category, store_id)` | Revenue by store: $33,726.77 + $33,679.79 = $67,406.56, matching the star schema's own reconciliation. |
+| Query cost | `query_cost(query_id)` from `INFORMATION_SCHEMA.QUERY_HISTORY_BY_USER` | Example: 1.824 s elapsed (1.142 s compile, 0.653 s execute), 8,720 bytes scanned, 0.000238 cloud-services credits, about 0.00018 warehouse credits (labelled as an estimate). |
+| Docstrings | Each tool says when to use it and when not to | Example, from aggregate: "how many customers" → `distinct_customers`, never `rental_count`. |
+| Allow-list for GROUP BY | `check_allowed` on metric, group_by, category and table | `group_by = "store; DROP TABLE ..."` was rejected with the list of allowed values. |
+| Parsed dates | `parse_date`: YYYY-MM-DD only, and start ≤ end | `"2005-07-01' OR 1=1 --"` was rejected; an end date before the start date was rejected. |
+| Capped LIMIT | `cap_limit`: 1–200 | `limit = 100000` ran with 200 and said so. |
 | Backstop | Read-only role `A5_APP_RO`, key-pair login, `USE SECONDARY ROLES NONE` | `UPDATE SAKILA.DW.DIM_STORE ... WHERE 1 = 0` was refused with "SQL access control error". The role holds only SELECT and USAGE. |
 
 The server is registered in Claude Desktop (Settings → Developer → Local MCP servers: `sakila-warehouse`) and in Claude Code (`.mcp.json`).

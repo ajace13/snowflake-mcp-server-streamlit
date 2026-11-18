@@ -117,7 +117,7 @@ tests/test_offline.py      validation and SQL-building tests with a fake warehou
 tests/test_app.py          router, answers and the app itself (Streamlit AppTest), incl. the adversarial questions
 tests/fake_warehouse.py    offline stand-in for Snowflake, used by the tests
 docs/                      requirements-to-evidence map, break-test findings and live results
-writeup/                   project write-up (project_writeup.pdf), screenshots and evidence
+writeup/                   project write-up (WRITEUP.md), screenshots and evidence
 ```
 
 ## Background
