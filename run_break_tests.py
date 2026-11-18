@@ -1,11 +1,11 @@
-"""Run the Part 4 break-it questions through the same code the app uses, and log what happened.
+"""Run the break-test questions through the same code the app uses, and log what happened.
 
     .venv\\Scripts\\python run_break_tests.py               # live, against Snowflake
     .venv\\Scripts\\python run_break_tests.py --fake        # offline, with the test stand-in
 
-Writes docs/part4_live_results.md (or docs/part4_fake_results.md with --fake). Each entry records
+Writes docs/break_test_live_results.md (or docs/break_test_fake_results.md with --fake). Each entry records
 how the question was routed, what the user saw, the SQL, rows, grain and cost: the raw material for
-the Part 4 write-up.
+the break-test write-up.
 """
 from __future__ import annotations
 
@@ -101,8 +101,8 @@ def main() -> None:
         from warehouse import db, tools
         db.run = fake_run
         tools._coverage = dict(COVERAGE)
-    out = ROOT / "docs" / ("part4_fake_results.md" if args.fake else "part4_live_results.md")
-    parts = [f"# Part 4 break tests: {'OFFLINE STAND-IN, not real numbers' if args.fake else 'live run'}",
+    out = ROOT / "docs" / ("break_test_fake_results.md" if args.fake else "break_test_live_results.md")
+    parts = [f"# Break tests: {'OFFLINE STAND-IN, not real numbers' if args.fake else 'live run'}",
              f"Run {dt.datetime.now():%Y-%m-%d %H:%M}. Each question goes through the same router and answer code as the app.",
              ""]
     for title, questions in TESTS:

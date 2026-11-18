@@ -1,8 +1,8 @@
-# Part 4: trying to break the app, and what changed
+# Break tests: trying to break the app, and what changed
 
 The app answers in plain English without a language model: `qa/router.py` reads the question with keyword rules and picks one of the four tools. That makes it predictable and cheap, but it can only understand the words it was written for. So the tests below aim at that edge: each of the five required questions, plus harder variants of each, written to find the questions that get a confident wrong answer.
 
-The five required questions passed on the first try. The variants did not: the first version of the router handled none of the 18 below well. Most got a confident answer to a different question, with no warning. Those are the findings below. Each one has been changed (one only partly, on purpose) and has a regression test in `tests/test_app.py`. The "after" column was checked offline; `run_break_tests.py` reruns the full set against the live warehouse and writes `docs/part4_live_results.md`.
+The five core questions passed on the first try. The variants did not: the first version of the router handled none of the 18 below well. Most got a confident answer to a different question, with no warning. Those are the findings below. Each one has been changed (one only partly, on purpose) and has a regression test in `tests/test_app.py`. The "after" column was checked offline; `run_break_tests.py` reruns the full set against the live warehouse and writes `docs/break_test_live_results.md`.
 
 ## The five questions
 
@@ -20,7 +20,7 @@ Before = the first version of the router. After = now.
 
 | Category | Question | Before | Why it's bad | After |
 | --- | --- | --- | --- | --- |
-| Distinct customers | "How many customers rented more than once?" | 599 customers (everyone who rented at all) | Exactly the trap the assignment warns about: a plausible number for a different question | Can't answer: the tools count customers but can't filter on how often each one rented |
+| Distinct customers | "How many customers rented more than once?" | 599 customers (everyone who rented at all) | Exactly the rows-vs-customers trap: a plausible number for a different question | Can't answer: the tools count customers but can't filter on how often each one rented |
 | Distinct customers | "Which countries have the most customers?" | Revenue by country | Wrong measure, and it looked fine | Different customers by country |
 | Distinct customers | "How many people rented Horror movies last summer?" | Horror customers over the whole data | "last summer" was dropped without a note | Reads it as summer 2005 (June to August) and says so |
 | Distinct customers | "Which film was rented the most?" | Revenue by month | Nothing about films | Can't answer: there is no per-film ranking (the tools group by month, category, store, country or rating) |

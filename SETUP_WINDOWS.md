@@ -2,7 +2,7 @@
 
 The server is a small Python program on this laptop. Claude Desktop or Claude Code starts it and talks to it over stdio, so no network port is opened. It connects out to Snowflake (`<your-account-identifier>`) as `CLAUDE_AGENT` with a key pair, under the SELECT-only role `A5_APP_RO`.
 
-## 1. Python environment (in the Assignment5 folder, PowerShell)
+## 1. Python environment (in the project folder, PowerShell)
 
 ```powershell
 py -3.13 -m venv .venv
@@ -24,7 +24,7 @@ Python 3.13 is used because 3.14 is newer than some Snowflake wheels.
 .venv\Scripts\python check_connection.py
 ```
 
-It prints your user and role, the SAKILA.DW tables, revenue by store, and what that query cost. The two stores should add up to 67,406.56, the Week 4 check. Last, it tries an `UPDATE` that changes nothing (`WHERE 1 = 0`), which the read-only role should **refuse**.
+It prints your user and role, the SAKILA.DW tables, revenue by store, and what that query cost. The two stores should add up to 67,406.56, the known total from the warehouse build. Last, it tries an `UPDATE` that changes nothing (`WHERE 1 = 0`), which the read-only role should **refuse**.
 
 ## 4a. Claude Desktop
 
@@ -32,7 +32,7 @@ Settings → Developer → Edit Config opens `claude_desktop_config.json`. Add t
 
 ## 4b. Claude Code
 
-From the Assignment5 folder:
+From the project folder:
 
 ```powershell
 claude mcp add --scope project sakila-warehouse --env SNOWFLAKE_CONNECTION=claude --env SNOWFLAKE_ROLE=A5_APP_RO -- "<this folder>\.venv\Scripts\python.exe" "<this folder>\mcp_server.py"

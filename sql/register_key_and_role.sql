@@ -1,4 +1,4 @@
--- CNDE Assignment 5: attach a key from this PC to CLAUDE_AGENT and create a read-only role.
+-- Attach a key from this PC to CLAUDE_AGENT and create a read-only role.
 -- Paste into a Snowsight worksheet and Run All (as ACCOUNTADMIN). Safe to re-run.
 -- <PUBLIC_KEY> = the public key body (no BEGIN/END lines). The filled-in copy lives in local/ (git-ignored).
 USE ROLE ACCOUNTADMIN;
@@ -6,7 +6,7 @@ CREATE WAREHOUSE IF NOT EXISTS CLASS_WH WAREHOUSE_SIZE = XSMALL AUTO_SUSPEND = 6
 ALTER WAREHOUSE CLASS_WH SET AUTO_SUSPEND = 60;
 CREATE USER IF NOT EXISTS CLAUDE_AGENT TYPE = SERVICE DEFAULT_WAREHOUSE = CLASS_WH COMMENT = 'Claude agent, key-pair login only';
 ALTER USER CLAUDE_AGENT SET RSA_PUBLIC_KEY_2 = '<PUBLIC_KEY>';
-CREATE ROLE IF NOT EXISTS A5_APP_RO COMMENT = 'CNDE A5 MCP server: SELECT only';
+CREATE ROLE IF NOT EXISTS A5_APP_RO COMMENT = 'Sakila MCP server: SELECT only';
 GRANT ROLE A5_APP_RO TO ROLE SYSADMIN;
 GRANT USAGE ON WAREHOUSE CLASS_WH TO ROLE A5_APP_RO;
 EXECUTE IMMEDIATE $$

@@ -172,7 +172,7 @@ ICON = {"ok": "✅", "warn": "⚠️", "info": "ℹ️"}
 
 
 def how_panel(a: ans.Answer) -> None:
-    """Part 3: which tool, its SQL, rows and grain, cost, and the checks that ran."""
+    """Show which tool, its SQL, rows and grain, cost, and the checks that ran."""
     st.subheader("How this was answered")
     r, plan = a.result, a.plan
     if plan.kind != "tool" or r is None:

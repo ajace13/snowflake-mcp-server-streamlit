@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives import serialization
 
 from .config import load_settings
 
-QUERY_TAG = "cnde_a5_mcp"
+QUERY_TAG = "sakila_mcp_agent"
 STATEMENT_TIMEOUT_SECONDS = 60
 
 _conn = None

@@ -1,6 +1,6 @@
 """Where the Snowflake connection settings come from.
 
-Reads the [connections.<name>] block that the Week 4 setup script already wrote to
+Reads the [connections.<name>] block that the Snowflake CLI setup already wrote to
 ~/.snowflake/config.toml, then lets environment variables override any field.
 The private key never leaves your machine and is never printed.
 """

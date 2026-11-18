@@ -86,12 +86,12 @@ def test_grain_and_kind():
     assert "not documented" in grain_for("SOMETHING_ELSE")
 
 
-# ---- settings come from the Week 4 config.toml, env overrides win ----
+# ---- settings come from the Snowflake CLI config.toml, env overrides win ----
 def test_settings_from_config_toml(tmp_path, monkeypatch):
     cfg = tmp_path / "config.toml"
     cfg.write_text(
         '[connections.claude]\naccount = "org-acct"\nuser = "CLAUDE_AGENT"\nauthenticator = "SNOWFLAKE_JWT"\n'
-        'private_key_file = "C:/Users/x/.snowflake/claude_agent.p8"\nrole = "CLAUDE_RW"\n'
+        'private_key_file = "C:/path/to/keys/claude_agent.p8"\nrole = "CLAUDE_RW"\n'
         'warehouse = "CLASS_WH"\ndatabase = "CLASSICMODELS"\nschema = "DW"\n'
     )
     for k in list(config.ENV_OVERRIDES) + ["SNOWFLAKE_CONNECTION"]:
