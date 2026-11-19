@@ -1,4 +1,5 @@
--- Attach a key from this PC to CLAUDE_AGENT and create a read-only role.
+-- Create the key-only service user CLAUDE_AGENT, attach your public key, and create a read-only role.
+-- Needs the SAKILA database first (see sakila-snowflake-star-schema). Rename CLASS_WH, CLAUDE_AGENT or A5_APP_RO freely; use the same names in your connection config.
 -- Paste into a Snowsight worksheet and Run All (as ACCOUNTADMIN). Safe to re-run.
 -- <PUBLIC_KEY> = the public key body (no BEGIN/END lines). The filled-in copy lives in local/ (git-ignored).
 USE ROLE ACCOUNTADMIN;
@@ -12,7 +13,7 @@ GRANT USAGE ON WAREHOUSE CLASS_WH TO ROLE A5_APP_RO;
 EXECUTE IMMEDIATE $$
 DECLARE
   dbs STRING DEFAULT '';
-  c1 CURSOR FOR SELECT DATABASE_NAME FROM CLASSICMODELS.INFORMATION_SCHEMA.DATABASES
+  c1 CURSOR FOR SELECT DATABASE_NAME FROM SAKILA.INFORMATION_SCHEMA.DATABASES
                 WHERE DATABASE_NAME ILIKE '%SAKILA%' OR DATABASE_NAME ILIKE 'CLASSICMODELS%';
 BEGIN
   FOR rec IN c1 DO

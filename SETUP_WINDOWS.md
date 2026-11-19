@@ -1,5 +1,7 @@
 # Run the MCP server on Windows and connect Claude to it
 
+> This is the walkthrough for my own Windows laptop. For a general setup on any machine and your own Snowflake account, start with [Use it yourself](README.md#use-it-yourself).
+
 The server is a small Python program on this laptop. Claude Desktop or Claude Code starts it and talks to it over stdio, so no network port is opened. It connects out to Snowflake (`<your-account-identifier>`) as `CLAUDE_AGENT` with a key pair, under the SELECT-only role `A5_APP_RO`.
 
 ## 1. Python environment (in the project folder, PowerShell)

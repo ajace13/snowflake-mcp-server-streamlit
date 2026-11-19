@@ -79,25 +79,64 @@ Five adversarial questions, then 18 harder variants aimed at the keyword router'
 
 The first version of the router handled none of the 18 variants well; most got a confident answer to a different question. All 18 were changed (one only partly, on purpose: "How many customers in Canada?" still shows 599 but warns that "canada" was ignored, because the tools have no country filter) and each has a regression test. Live use also found and fixed a first-call hang in Claude Desktop on Windows, caused by a lazy import of the Snowflake connector starting a subprocess that inherited the MCP server's stdin.
 
-## How to run
+## Use it yourself
 
-The tests run offline against a fake warehouse; no Snowflake account is needed:
+Nobody needs access to my Snowflake account. You run the same code against your own warehouse, and the steps below build that warehouse from scratch.
+
+### 1. Try it with no account (about 2 minutes)
+
+The tests run against a fake warehouse, so they need no Snowflake account and no API key:
 
 ```bash
+git clone https://github.com/ajace13/snowflake-mcp-server-streamlit
+cd snowflake-mcp-server-streamlit
 python -m venv .venv
-.venv/bin/pip install -r requirements.txt     # Windows: .venv\Scripts\pip
-.venv/bin/python -m pytest -q
+.venv/bin/pip install -r requirements.txt      # Windows: .venv\Scripts\pip
+.venv/bin/python -m pytest -q                  # 76 tests, including the adversarial questions
 ```
 
-To run against Snowflake (key pair, read-only role, Claude Desktop and Claude Code registration, the Streamlit app), see [SETUP_WINDOWS.md](SETUP_WINDOWS.md). In short:
+### 2. Run it on your own Snowflake
 
-```powershell
-.venv\Scripts\python check_connection.py   # live: identity, tables, a real aggregate, its cost, read-only proof
-.venv\Scripts\python -m streamlit run app.py
-.venv\Scripts\python run_break_tests.py    # live adversarial questions -> docs/break_test_live_results.md
-```
+You need a Snowflake account (the [free 30-day trial](https://signup.snowflake.com/) is enough) and the ACCOUNTADMIN role for the one-time setup.
 
-Then register the server in Claude Desktop (`claude_desktop_config.example.json`) or Claude Code (`.mcp.json.example`).
+1. **Build the warehouse.** This server reads `SAKILA.DW`. Create it with the scripts in [sakila-snowflake-star-schema](https://github.com/ajace13/sakila-snowflake-star-schema#run-it-on-snowflake). The CSVs are committed there, so you don't need MySQL.
+2. **Make a key pair** for the service user. No password is stored anywhere:
+   ```bash
+   openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+   openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+   ```
+   Keep `rsa_key.p8` outside the repo and never commit it.
+3. **Create the user and the read-only role.** Open [`sql/register_key_and_role.sql`](sql/register_key_and_role.sql) in a Snowsight worksheet, paste the body of `rsa_key.pub` (without the BEGIN/END lines) in place of `<PUBLIC_KEY>`, and Run All. It creates an X-Small warehouse `CLASS_WH`, a key-only service user `CLAUDE_AGENT`, and the role `A5_APP_RO` with SELECT on the Sakila databases and nothing else. You can rename any of them, as long as you use the same names in step 4.
+4. **Tell the code where to connect.** Add a block to the Snowflake CLI config file (`~/.snowflake/config.toml`, or `%LOCALAPPDATA%\snowflake\config.toml` on Windows):
+   ```toml
+   [connections.claude]
+   account = "<your-account-identifier>"     # shown in Snowsight's account menu, e.g. ORGNAME-ACCOUNTNAME
+   user = "CLAUDE_AGENT"
+   authenticator = "SNOWFLAKE_JWT"
+   private_key_file = "/full/path/to/rsa_key.p8"
+   role = "A5_APP_RO"
+   warehouse = "CLASS_WH"
+   database = "SAKILA"
+   schema = "DW"
+   ```
+   Environment variables override any field: `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PRIVATE_KEY_FILE`, `SNOWFLAKE_ROLE`, `SNOWFLAKE_WAREHOUSE`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`. `SNOWFLAKE_CONNECTION` picks a block other than `claude`, and `SNOWFLAKE_CONFIG_FILE` points at a config file somewhere else.
+5. **Check the connection, then run the app:**
+   ```bash
+   .venv/bin/python check_connection.py        # your identity, the tables, one real query and its cost, and a refused UPDATE
+   .venv/bin/python -m streamlit run app.py    # opens http://localhost:8501
+   .venv/bin/python run_break_tests.py         # optional: the adversarial questions against your warehouse
+   ```
+   `check_connection.py` should show revenue for the two stores adding up to 67,406.56. Queries run on the X-Small warehouse, which suspends after 60 seconds idle, so a session of questions costs a few cents of trial credit.
+
+### 3. Connect it to Claude
+
+- **Claude Desktop:** Settings, then Developer, then Edit Config. Add the `sakila-warehouse` entry from [`claude_desktop_config.example.json`](claude_desktop_config.example.json) with your paths, then fully quit and reopen Claude Desktop. It should show under Local MCP servers as running.
+- **Claude Code:** copy [`.mcp.json.example`](.mcp.json.example) to `.mcp.json` in this folder and edit the paths, or run
+  `claude mcp add --scope project sakila-warehouse --env SNOWFLAKE_CONNECTION=claude -- <path-to-venv-python> <path-to>/mcp_server.py`.
+
+Then ask something like "How many customers rented Action films in July 2005?" (the answer is 318 customers, 464 rentals). A Windows walkthrough with troubleshooting is in [SETUP_WINDOWS.md](SETUP_WINDOWS.md).
+
+**Streamlit in Snowflake:** not supported yet. The app connects from your machine with a key pair; running it inside Snowflake would need `warehouse/db.py` to use the session Snowflake provides.
 
 ## Project layout
 
